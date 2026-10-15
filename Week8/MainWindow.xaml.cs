@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;
+using System.Windows.Media;
 
 namespace MusicReferenceHub;
 
@@ -16,9 +17,17 @@ public partial class MainWindow : Window
 
     private void Load_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Playback chapter): Implement Load in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Load_Click: behavior still to build.";
+        OpenFileDialog dialog = new OpenFileDialog();
+        dialog.Filter = "Audio Files|*.mp3;*.wav";
+
+    if (dialog.ShowDialog() == true)
+    {
+    txtStatus.Text = "Selected: " + dialog.SafeFileName;
+    }
+    else
+    {
+    txtStatus.Text = "No file selected.";
+    }
     }
 
     private void Play_Click(object sender, RoutedEventArgs e)
