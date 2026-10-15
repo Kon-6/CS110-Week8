@@ -9,6 +9,7 @@ namespace MusicReferenceHub;
 // MainWindow is a class. Put fields and methods inside these outer braces.
 public partial class MainWindow : Window
 {
+    private bool audioLoaded = false;
     public MainWindow()
     {
         InitializeComponent();
@@ -22,6 +23,8 @@ public partial class MainWindow : Window
 
     if (dialog.ShowDialog() == true)
     {
+    mediaPlayer.Source = new Uri(dialog.FileName);
+    audioLoaded = true;
     txtStatus.Text = "Selected: " + dialog.SafeFileName;
     }
     else
@@ -32,76 +35,153 @@ public partial class MainWindow : Window
 
     private void Play_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Playback chapter): Implement Play in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Play_Click: behavior still to build.";
+        if (audioLoaded)
+        {
+            mediaPlayer.Play();
+            txtStatus.Text = "Playing music.";
+        }
+        else
+        {
+            txtStatus.Text = "No audio loaded. Please load an audio file first.";
+        }
     }
 
     private void Pause_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Playback chapter): Implement Pause in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Pause_Click: behavior still to build.";
-    }
-
+        if (audioLoaded)
+        {
+            mediaPlayer.Pause();
+            txtStatus.Text = "Music paused.";
+        }
+        else
+        {
+            txtStatus.Text = "No audio loaded.";
+        }
+    }  
     private void Stop_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Playback chapter): Implement Stop in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Stop_Click: behavior still to build.";
+        if (audioLoaded)
+        {
+            mediaPlayer.Stop();
+            txtStatus.Text = "Music stopped.";
+        }
+        else
+        {
+            txtStatus.Text = "No audio loaded.";
+        }
     }
 
     private void AddLink_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Links chapter): Implement AddLink in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "AddLink_Click: behavior still to build.";
+        string link = txtLink.Text.Trim();
+        if (Uri.TryCreate(link, UriKind.Absolute, out Uri? url)
+            && (url.Scheme == Uri.UriSchemeHttp || 
+            url.Scheme == Uri.UriSchemeHttps))
+        {
+            lstLinks.Items.Add(link);
+            txtLink.Clear();
+            txtStatus.Text = "Link added successfully.";
+        }
+        else
+        {
+            txtStatus.Text = "Please enter a valid URL.";
+        }
     }
 
     private void OpenLink_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Links chapter): Implement OpenLink in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "OpenLink_Click: behavior still to build.";
+        if (lstLinks.SelectedItem is string link)
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = link,
+                    UseShellExecute = true
+                });
+            txtStatus.Text = "Opening link.";
+        }
+        else
+        {
+            txtStatus.Text = "Please select a link first.";
+        }
     }
 
     private void Save_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Text files chapter): Implement Save in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Save_Click: behavior still to build.";
+        string notes = txtNotes.Text.Trim();
+
+        if (string.IsNullOrWhiteSpace(notes))
+        {
+            txtStatus.Text = "Please enter notes before saving.";
+            return;
+        }
+
+        SaveFileDialog dialog = new SaveFileDialog();
+        dialog.Filter = "Text Files (*.txt)|*.txt";
+        dialog.FileName = "MusicNotes.txt";
+
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                System.IO.File.WriteAllText(dialog.FileName, notes);
+                txtStatus.Text = "Notes saved successfully.";
+            }
+            catch (Exception)
+            {
+                txtStatus.Text = "Unable to save notes.";
+            }
+        }
     }
 
     private void Open_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Text files chapter): Implement Open in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Open_Click: behavior still to build.";
+        OpenFileDialog dialog = new OpenFileDialog();
+        dialog.Filter = "Text Files (*.txt)|*.txt";
+
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                txtNotes.Text = System.IO.File.ReadAllText(dialog.FileName);
+                txtStatus.Text = "Notes reopened successfully.";
+            }
+            catch (Exception)
+            {
+                 txtStatus.Text = "Unable to open notes.";
+            }
+        }
     }
 
     private void Image_Click(object sender, RoutedEventArgs e)
     {
-        // TODO (Artwork chapter): Implement Image in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Image_Click: behavior still to build.";
+        OpenFileDialog dialog = new OpenFileDialog();
+        dialog.Filter = "Image Files |*.jpg;*.jpeg;*.png;";
+
+        if (dialog.ShowDialog() == true)
+        {
+            imgArtwork.Source = new System.Windows.Media.Imaging.BitmapImage(
+                new Uri(dialog.FileName));
+            txtStatus.Text = "Artwork loaded successfully.";
+        }
+        else
+        {
+            txtStatus.Text = "No artwork selected.";
+        }
     }
 
     private void Media_Opened(object sender, RoutedEventArgs e)
     {
-        // TODO (Playback chapter): Implement Media_Opened in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Media_Opened: behavior still to build.";
+        txtStatus.Text = "Audio opened successfully.";
     }
 
     private void Media_Ended(object sender, RoutedEventArgs e)
     {
-        // TODO (Playback chapter): Implement Media_Ended in the matching tutorial chapter.
-        // Replace this placeholder with the handler shown in that chapter.
-        txtStatus.Text = "Media_Ended: behavior still to build.";
+        txtStatus.Text = "Music finished playing.";
     }
 
     private void Media_Failed(object sender, ExceptionRoutedEventArgs e)
     {
-        // TODO: show a helpful file-format recovery message in the Playback chapter.
+        txtStatus.Text = "Unable to play audio. Please check the file format.";
     }
 }
