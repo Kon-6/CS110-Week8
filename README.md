@@ -7,4 +7,5 @@ My Week 8 and supporting evidence can be found in the Evidence folder.
 
 ## Receipt
 Receipt can be found in my Evidence folder
+
 [View my Week 8 Receipt](Evidence/Receipt/)
