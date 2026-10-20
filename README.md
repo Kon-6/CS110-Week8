@@ -1,3 +1,31 @@
+# Music Reference Hub
+
+## Main Features
+
+- Open a local audio file.
+- Save and open reference links.
+- Save, export, and reopen session notes.
+- Reject blank or invalid input and show a status message.
+
+## Build and Run
+
+This is a WPF app, so it must be run on Windows. On Windows, open
+`Week8/MusicReferenceHub.csproj` in Visual Studio and click **Start**.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Week 8 Evidence 
 My Week 8 and supporting evidence can be found in the Evidence folder.
 
